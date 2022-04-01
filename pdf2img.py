@@ -1,16 +1,64 @@
 # This script turns all pdfs in a path into images to run through the barcode reader script
 
-
 # import module
 import os
 import shutil
 from pdf2image import convert_from_path
 from os import path
-from glob import glob  
+from glob import glob
+
+# tkinter libs
+from tkinter import *
+from tkinter import filedialog
+
+
+
+
+##########################################################################
+
+#creating main root
+root = Tk()
+root.title("Barcode reader")
+script_path = os.path.abspath(os.curdir)
+
+
+# swags up your code
+# icon_replacement = PhotoImage(file="ying-yang.ico")
+# root.iconphoto(False, icon_replacement)
+
+##########################################################################
+
+
 
 # have the code find its script path
 script_path = os.path.abspath(os.curdir)
 
+# prompts user to select pdf file
+def selectingFromFolder():
+    global file_name
+    file_name = filedialog.askopenfilename()
+
+    #copies file into script path
+    shutil.copyfile(file_name, script_path)
+
+
+
+
+
+
+def conver_from_pdf_to_jpg(file_name):
+
+    images = convert_from_path(file_name)
+ 
+    for i in range(len(images)):
+        img_path = (script_path + "/imgs/")
+        # Save pages as images in the pdf and renames them
+        images[i].save(img_path + 'page'+ str(i) +'.jpg', 'JPEG')
+
+        # moves images into isolated folder
+
+
+############################################################################################
 
 def find_ext(dr, ext):
     return glob(path.join(dr,"*.{}".format(ext)))
@@ -36,73 +84,29 @@ def getListOfFiles(dirName):
     return allFiles
 
 
-## main function
-def main():
-    
-    dirName = 'Y:\Jerry Ray\Adidas labels';
-    
-    # Get the list of all files in directory tree at given path
-    listOfFiles = getListOfFiles(dirName)
-    
-    # Print the files
-    for elem in listOfFiles:
-        ## start parsing all pdf files here
-        if elem.endswith(".pdf"):
-            i = 0
-            
-            # copies a files from the img source to the script path
-            # for fname in img_list:
-            shutil.copy2(os.path.join(elem),script_path)
-
-            onlyPDFs.append(elem)
 
 
 
-            
-            
-
-            print(i)
-
-            i = i +1
-            
-     # turn pdf's into imgs
-    images = convert_from_path(elem, 500, poppler_path=r"C:\Users\chris\OneDrive\Desktop\scipts\python\resources\poppler-22.01.0\Library\bin")
-    for i, image in enumerate(images):
-                print(images(i))
-                base = os.path.basename(os.path.normpath(images[i]))
-                fname = base +str(i)+'.jpeg'
-                image.save(fname, "JPEG")
 
 
-    print ("****************")
-    print("First Function")
-    
-    # Get the list of all files in directory tree at given path
-    #listOfFiles = list()
-    #for (dirpath, dirnames, filenames) in os.walk(dirName):
-    #    listOfFiles += [os.path.join(dirpath, file) for file in filenames]
-        
-        
-    # Print the files    
-    #for elem in listOfFiles:
-    #    print(elem)    
-        
-        
-        
-        
-## main function call
-main()
+
+##########################################################################
+#creating GUI widgets
+scriptDescript = Label(root, text="This script reads all images in a folder \n for barcodes and outputs them in a specified folder")
+label_1 = Label(root, text="Folder: ", padx=10, pady=15)
+folderSelect = Button(root, text="Select", width=10, borderwidth=3, command=selectingFromFolder)
+runScript = Button(root, text="Run script", width=10, borderwidth=3, command=conver_from_pdf_to_jpg)
+
+scriptDescript.grid(row=0, column=0, columnspan=2)
+label_1.grid(row=1, column=0)
+folderSelect.grid(row=1, column=1)
+runScript.grid(row=2, column=1)
 
 
-### 4669
-### A DECISION FOR SOMETHING IS A DECISION AGAINST SOMETHING ELSE
+##########################################################################
+root.mainloop()
 
+quit()
 
- 
-# Store Pdf with convert_from_path function
-#images = convert_from_path('example.pdf')
- 
-#for i in range(len(images)):
-   
-#      # Save pages as images in the pdf
-#    images[i].save('page'+ str(i) +'.jpg', 'JPEG')
+### A DECISION FOR SOMETING IS A DECISION AGAINST SOMETHING ELSE
+### 4.669
